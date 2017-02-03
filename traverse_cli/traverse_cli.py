@@ -35,7 +35,7 @@ def find_children(command, root):
         raise Exception('{!r} failed with return code {!r}'.format(raw_command, proc))
     return output.splitlines()
 
-def breadth_first(start):
+def breadth_first(command, start):
     frontier = set(start)
     all_nodes = set()
 
@@ -48,7 +48,7 @@ def breadth_first(start):
         all_nodes |= frontier
 
         for node in frontier:
-            node_children[node] = find_children(args.child_command, node)
+            node_children[node] = find_children(command, node)
             new_frontier |= set(node_children[node])
 
         yield new_frontier, all_nodes, node_children
@@ -71,7 +71,7 @@ def main():
 
     tree_graph = dict()
 
-    for depth, (frontier, _all_nodes, children) in enumerate(breadth_first([args.root])):
+    for depth, (frontier, _all_nodes, children) in enumerate(breadth_first(args.child_command, [args.root])):
 
         tree_graph.update(children)
 
